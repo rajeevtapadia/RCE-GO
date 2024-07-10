@@ -6,13 +6,15 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 
+	"rce-go/docker"
 
 	"github.com/docker/docker/client"
-	"rce-go/docker"
 )
 
 func main() {
+	fmt.Println("start..")
 	ctx := context.Background()
 	dockerCli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -28,11 +30,12 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println(string(content))
+		fmt.Println(strconv.Quote(string(content)))
 		// fmt.Fprint(w, string(content))
 
-		docker.StartNodeContainer(ctx, dockerCli)
+		docker.StartNodeContainer(ctx, dockerCli, string(content))
 	})
 
 	log.Fatal(http.ListenAndServe(":4000", nil))
+	fmt.Println("server started on 4000")
 }
