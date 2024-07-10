@@ -2,16 +2,17 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
+	"rce-go/utils"
 	"strconv"
-
-	"rce-go/docker"
 
 	"github.com/docker/docker/client"
 )
+
+
 
 func main() {
 	fmt.Println("start..")
@@ -23,17 +24,23 @@ func main() {
 	defer dockerCli.Close()
 
 	// upon starting pull all the required docker images
-	docker.PullAllContainers(ctx, dockerCli)
+	// docker.PullAllContainers(ctx, dockerCli)
 
 	http.HandleFunc("POST /execute", func(w http.ResponseWriter, r *http.Request) {
-		content, err := io.ReadAll(r.Body)
+		var data utils.PayLoad
+		err = json.NewDecoder(r.Body).Decode(&data)
 		if err != nil {
-			panic(err)
+			http.Error(w, "Invalid payload", 400)
 		}
-		fmt.Println(strconv.Quote(string(content)))
-		// fmt.Fprint(w, string(content))
+		if data.IsValid() == false {
+			http.Error(w, "Unsupported language", 400)
+		}
+		data.Code = strconv.Quote(data.Code)
+		fmt.Println(data.Code)
 
-		docker.StartNodeContainer(ctx, dockerCli, string(content))
+		fmt.Fprint(w, data.Language)
+
+		// docker.StartNodeContainer(ctx, dockerCli, string(content))
 	})
 
 	log.Fatal(http.ListenAndServe(":4000", nil))
