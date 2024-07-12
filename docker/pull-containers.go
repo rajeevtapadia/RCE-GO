@@ -1,5 +1,5 @@
 /*
- * functions that pull containers for the following languages
+ * utility functions to pull containers for the following languages
  * c/cpp
  * python
  * javascript
@@ -9,34 +9,33 @@ package docker
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"os"
+	"rce-go/utils"
 
 	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/client"
 )
 
-func PullAllContainers(ctx context.Context, client *client.Client) {
-	pullNodeContainer(ctx, client)
-}
+func PullAllContainers() {
+	ctx := context.Background()
 
-func pullGccContainer(ctx context.Context, client *client.Client) {
-	out, err := client.ImagePull(ctx, "gcc:14", image.PullOptions{})
+	dockerCli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		panic(err)
 	}
+	defer dockerCli.Close()
 
-	defer out.Close()
-
-	io.Copy(os.Stdout, out)
+	pullContainer(ctx, dockerCli, utils.NodeImage)
 }
 
-func pullNodeContainer(ctx context.Context, client *client.Client) {
-	out, err := client.ImagePull(ctx, "node:20-alpine", image.PullOptions{})
+func pullContainer(ctx context.Context, client *client.Client, name string) {
+	out, err := client.ImagePull(ctx, name, image.PullOptions{})
 	if err != nil {
-		panic(err)
+		fmt.Println("error while pulling images")
 	}
-	defer out.Close()
 
+	defer out.Close()
 	io.Copy(os.Stdout, out)
 }

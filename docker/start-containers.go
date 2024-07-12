@@ -4,17 +4,17 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strconv"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/stdcopy"
 )
 
-func StartNodeContainer(command string, image string) {
+func StartContainer(command string, image string) {
 	ctx := context.Background()
-	
+
 	// create connection
+	fmt.Println("creating docker client")
 	dockerCli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		panic(err)
@@ -22,8 +22,8 @@ func StartNodeContainer(command string, image string) {
 	defer dockerCli.Close()
 
 	resp, err := dockerCli.ContainerCreate(ctx, &container.Config{
-		Image: "node:20-alpine",
-		Cmd:   []string{"sh", "-c", fmt.Sprintf("echo %s > index.js && node index.js", strconv.Quote(code))},
+		Image: image,
+		Cmd:   []string{"sh", "-c", command},
 		Tty:   false,
 	}, nil, nil, nil, "")
 
@@ -59,7 +59,3 @@ func StartNodeContainer(command string, image string) {
 	fmt.Println("container removed")
 
 }
-
-func startNodeContainer(ctx context.Context, cli *client.Client, code string) {
-	fmt.Println("creating container")
-	}

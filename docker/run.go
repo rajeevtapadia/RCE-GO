@@ -11,10 +11,10 @@ func Run(data *utils.PayLoad) {
 	switch data.Language {
 	case "javascript":
 		command = fmt.Sprintf("echo %s > index.js && node index.js", data.Code)
-		image = "node:20-alpine"
+		image = utils.NodeImage
 	case "python":
 		command = "to be implemented"
-		image = "python:3.9.19-slim"
+		image = utils.PythonImage
 	case "cpp":
 		command = "to be implemented"
 		image = "gcc:14"
@@ -22,4 +22,6 @@ func Run(data *utils.PayLoad) {
 
 	fmt.Println(command)
 	fmt.Println(image)
+
+	StartContainer(command, image)
 }
