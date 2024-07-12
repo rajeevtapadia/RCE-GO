@@ -25,3 +25,5 @@ func (pl PayLoad) IsValid() bool {
 // image names
 const NodeImage = "node:20-alpine"
 const PythonImage = "python:3.9.19-slim"
+const CppImage = "frolvlad/alpine-gxx"
+const CImage = "frolvlad/alpine-gxx"

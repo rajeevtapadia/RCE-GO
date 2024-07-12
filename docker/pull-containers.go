@@ -28,6 +28,8 @@ func PullAllContainers() {
 	defer dockerCli.Close()
 
 	pullContainer(ctx, dockerCli, utils.NodeImage)
+	pullContainer(ctx, dockerCli, utils.PythonImage)
+	pullContainer(ctx, dockerCli, utils.CppImage)
 }
 
 func pullContainer(ctx context.Context, client *client.Client, name string) {

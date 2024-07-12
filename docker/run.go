@@ -13,11 +13,14 @@ func Run(data *utils.PayLoad) {
 		command = fmt.Sprintf("echo %s > index.js && node index.js", data.Code)
 		image = utils.NodeImage
 	case "python":
-		command = "to be implemented"
+		command = fmt.Sprintf("echo %s > main.py && python main.py", data.Code)
 		image = utils.PythonImage
 	case "cpp":
-		command = "to be implemented"
-		image = "gcc:14"
+		command = fmt.Sprintf("echo -e %s > main.cpp && g++ main.cpp -o main && ./main", data.Code)
+		image = utils.CppImage
+	case "c":
+		command = fmt.Sprintf("echo -e %s > main.c && gcc main.c -o main && ./main", data.Code)
+		image = utils.CImage
 	}
 
 	fmt.Println(command)
