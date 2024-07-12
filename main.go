@@ -16,12 +16,7 @@ import (
 
 func main() {
 	fmt.Println("start..")
-	ctx := context.Background()
-	dockerCli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-	if err != nil {
-		panic(err)
-	}
-	defer dockerCli.Close()
+	
 
 	// upon starting pull all the required docker images
 	// docker.PullAllContainers(ctx, dockerCli)
