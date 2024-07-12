@@ -5,7 +5,7 @@ import (
 	"rce-go/utils"
 )
 
-func Run(data *utils.PayLoad) {
+func Run(data *utils.PayLoad)[]byte {
 	var command string
 	var image string
 	switch data.Language {
@@ -26,5 +26,5 @@ func Run(data *utils.PayLoad) {
 	fmt.Println(command)
 	fmt.Println(image)
 
-	StartContainer(command, image)
+	return StartContainer(command, image)
 }

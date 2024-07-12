@@ -30,7 +30,8 @@ func main() {
 
 		fmt.Fprint(w, data.Language)
 
-		docker.Run(&data)
+		out := docker.Run(&data)
+		fmt.Println(string(out))
 	})
 
 	log.Fatal(http.ListenAndServe(":4000", nil))

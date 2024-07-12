@@ -3,6 +3,7 @@ package docker
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/docker/docker/api/types/container"
@@ -10,7 +11,7 @@ import (
 	"github.com/docker/docker/pkg/stdcopy"
 )
 
-func StartContainer(command string, image string) {
+func StartContainer(command string, image string) []byte {
 	ctx := context.Background()
 
 	// create connection
@@ -50,6 +51,11 @@ func StartContainer(command string, image string) {
 	if err != nil {
 		panic(err)
 	}
+	logs, err := io.ReadAll(out)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(logs))
 
 	stdcopy.StdCopy(os.Stdout, os.Stderr, out)
 
@@ -58,4 +64,5 @@ func StartContainer(command string, image string) {
 	}
 	fmt.Println("container removed")
 
+	return logs
 }
