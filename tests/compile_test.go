@@ -3,8 +3,8 @@ package docker
 import (
 	"rce-go/docker"
 	"rce-go/utils"
+	"regexp"
 	"strconv"
-	"strings"
 	"testing"
 )
 
@@ -13,6 +13,7 @@ func TestCompileJS(t *testing.T) {
 	data.Language = "javascript"
 	data.Code = strconv.Quote("console.log(\"js\")")
 	got := string(docker.Run(&data))
+	got = removeNonPrintableChars(got)
 	want := "js"
 
 	if got != want {
@@ -25,14 +26,12 @@ func TestCompilePython(t *testing.T) {
 	data.Language = "python"
 	data.Code = strconv.Quote(`print('python test is passing')`)
 
-	got := docker.Run(&data)
-
+	got := string(docker.Run(&data))
+	got = removeNonPrintableChars(got)
 	want := "python test is passing"
 
-	gotStr := strings.TrimSpace(string(got))
-
-	if gotStr != want {
-		t.Errorf("python test failed\n wanted: %s\n got: %s", want, gotStr)
+	if got != want {
+		t.Errorf("python test failed\n wanted: %s\n got: %s", want, got)
 	}
 }
 
@@ -45,14 +44,12 @@ int main() {
     return 0;
 }`)
 
-	got := docker.Run(&data)
-
+	got := string(docker.Run(&data))
+	got = removeNonPrintableChars(got)
 	want := "cpp test is passing"
 
-	gotStr := strings.TrimSpace(string(got))
-
-	if gotStr != want {
-		t.Errorf("cpp test failed\n wanted: %s\n got: %s", want, gotStr)
+	if got != want {
+		t.Errorf("cpp test failed\n wanted: %s\n got: %s", want, got)
 	}
 }
 
@@ -65,13 +62,16 @@ int main() {
     return 0;
 }`)
 
-	got := docker.Run(&data)
-
+	got := string(docker.Run(&data))
+	got = removeNonPrintableChars(got)
 	want := "c test is passing"
 
-	gotStr := strings.TrimSpace(string(got))
-
-	if gotStr != want {
-		t.Errorf("c test failed\n wanted: %s\n got: %s", want, gotStr)
+	if got != want {
+		t.Errorf("c test failed\n wanted: %s\n got: %s", want, got)
 	}
+}
+
+func removeNonPrintableChars(s string) string {
+	reg := regexp.MustCompile("[[:^print:]]")
+	return reg.ReplaceAllString(s, "")
 }
